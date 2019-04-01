@@ -1,7 +1,8 @@
 # 数字图像处理第六次作业
 ## 朱虎 自动化66 2161800226
 
-提交日期：2019年3月31日  
+提交日期：2019年3月31日   
+
 ## 摘要
 本次报告主要记录了第六次作业中各项任务完成情况。本次作业以MATLAB2018a为平台，结合matlab本身有的函数对图像文件进行相关处理。1.在测试图像上产生高斯噪声，并且可以指定均值和方差。通过matlab本身的`imnoise()`函数可以添加，另外，本次作业中通过利用 `randn()` 函数来写了一个可以自己指定均值和方差的函数。通过比较可以发现该函数所实现的效果与matlab自带的函数差别很小。2. 在测试图像上加入密度均为0.1的椒盐噪声，该噪声也可以通过`imnoise()`来实现，此外，还写了可以自己指定密度的椒盐噪声函数`jiaoyan()`。3. 实现下面要求：a.实现模糊滤波器如方程Eq.(5.6-11);b. 模糊lena图像，并达到了对应的效果，c. 在模糊lena图像中增加高斯噪声，均值为0，方差为10pixels以产生退化图像；(d)分别利用方程Eq.(5.8-6)和(5.9-4)，恢复图像，也得到了预期的结果。
 ## 实验原理、过程、结果分析讨论
@@ -64,21 +65,14 @@
 
 - **问题分析**
 1. 实现模糊滤波器如方程Eq.(5.6-11).
-模糊滤波器频域表达式为：
+模糊滤波器频域表达式为：  
 ![2](https://github.com/zhuhu00/hw6/tree/master/gs/p2.jpg)   
 ![3](https://github.com/zhuhu00/hw6/tree/master/gs/p3.jpg)   
 ![4](https://github.com/zhuhu00/hw6/tree/master/gs/p4.jpg)   
 ![5](https://github.com/zhuhu00/hw6/tree/master/gs/p5.jpg)   
 ![6](https://github.com/zhuhu00/hw6/tree/master/gs/p6.jpg)   
 ![7](https://github.com/zhuhu00/hw6/tree/master/gs/p7.jpg)   
-$$
-\mathbf{V}_1 \times \mathbf{V}_2 =  \begin{vmatrix} 
-\mathbf{i} & \mathbf{j} & \mathbf{k} \\
-\frac{\partial X}{\partial u} &  \frac{\partial Y}{\partial u} & 0 \\
-\frac{\partial X}{\partial v} &  \frac{\partial Y}{\partial v} & 0 \\
-\end{vmatrix}
-$$tep1}{\style{visibility:hidden}{(x+1)(x+1)}}
-$$  
+
 - **实验结果**
 1. 实现模糊滤波器  
 其频域表达式为：  
