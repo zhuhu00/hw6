@@ -37,18 +37,18 @@
 添加椒盐噪声，并且密度为0.1，可以使用matlab自带函数`imnoise()`来生成噪声，也可以使用自己写的函数`jiaoyan()`来生成噪声，其原理主要是通过需要生成两种噪声，则在生成的噪声密度选择上直接影响到效果。通过两种密度，分别生成逻辑矩阵（矩阵中只含有0，1），然后两个矩阵相与之后的图像即为添加后的图像。之后利用前述叙述的滤波器进行滤波，这里还有一种更适合去除椒盐噪声的滤波器是逆谐波均值滤波器。通过设置Q的大小，可以选择是否适合去除该种噪声。通过分析对比，得到结论。
 - **实验结果**
 添加椒盐噪声后的图像如下所示    
-![](https://github.com/zhuhu00/hw6/tree/master/pic/p_j.jpg)  
-进行滤波后的图像为  
-![](https://github.com/zhuhu00/hw6/tree/master/pic/p21.jpg)  
-![](https://github.com/zhuhu00/hw6/tree/master/pic/p23.jpg)  
-![](https://github.com/zhuhu00/hw6/tree/master/pic/p25.jpg)    
-使用逆谐波均值滤波器进行滤波结果  
-分别添加胡椒和白盐噪声
-![](https://github.com/zhuhu00/hw6/tree/master/pic/p2_j_y.jpg)
-对加入胡椒噪声的图像进行逆谐波滤波如下（Q = 1.5或-1.5）   
-![](https://github.com/zhuhu00/hw6/tree/master/pic/p2_h_nxb.jpg)     
-对加入白盐噪声的图像进行逆谐波滤波如下（Q = 1.5或-1.5）    
-![](https://github.com/zhuhu00/hw6/tree/master/pic/p2_h_nxb.jpg)   
+![22](https://github.com/zhuhu00/hw6/tree/master/pic/p_j.jpg)  
+进行滤波后的图像为    
+![2](https://github.com/zhuhu00/hw6/tree/master/pic/p21.jpg)  
+![2](https://github.com/zhuhu00/hw6/tree/master/pic/p23.jpg)  
+![2](https://github.com/zhuhu00/hw6/tree/master/pic/p25.jpg)    
+使用逆谐波均值滤波器进行滤波结果    
+分别添加胡椒和白盐噪声    
+![2](https://github.com/zhuhu00/hw6/tree/master/pic/p2_j_y.jpg)
+对加入胡椒噪声的图像进行逆谐波滤波如下（Q = 1.5或-1.5）     
+![2](https://github.com/zhuhu00/hw6/tree/master/pic/p2_h_nxb.jpg)     
+对加入白盐噪声的图像进行逆谐波滤波如下（Q = 1.5或-1.5）      
+![2](https://github.com/zhuhu00/hw6/tree/master/pic/p2_h_nxb.jpg)   
  
 - **结果分析**
 在逆谐波滤波器种，Q的取值直接影响到直接能够去除的波形。通过比较可知，Q>0时，去除的是胡椒噪声，Q<0时适合用来去除白盐噪声。其原理如下所示：  
@@ -61,7 +61,7 @@
 (a) 实现模糊滤波器如方程Eq. (5.6-11).    
 (b) 模糊lena图像：45度方向，T=1；      
 (c) 再模糊的lena图像中增加高斯噪声，均值= 0 ，方差=10 pixels 以产生模糊图像；    
-(d) 分别利用方程 Eq. (5.8-6)和(5.9-4)，恢复图像；并分析算法的优缺点.   
+(d) 分别利用方程 Eq. (5.8-6)和(5.9-4)，恢复图像；并分析算法的优缺点.     
 
 - **问题分析**
 1. 实现模糊滤波器如方程Eq.(5.6-11).
@@ -77,15 +77,15 @@
 1. 实现模糊滤波器  
 其频域表达式为：  
 ![8](https://github.com/zhuhu00/hw6/tree/master/gs/p8.jpg)  
-故实现该滤波器需要将图像进行傅里叶变换后并移至图像中心，之后将图像的傅里叶变换和模糊滤波器的傅里叶变换进行阵列相乘，将得到的结果经过傅里叶反变换返回到空间域即可实现滤波器。
-2. 模糊lena图像：45度方向，T=1； 
-3. 在模糊后的图像中加入高斯噪声（均值为0；方差为0.01) 
-![](https://github.com/zhuhu00/hw6/tree/master/pic/p31.jpg)   
-4. 分别利用方程 Eq. (5.8-6)和(5.9-4)，恢复图像。
-维纳滤波结果：  
-![](https://github.com/zhuhu00/hw6/tree/master/pic/p3_mh_w.jpg)  
-约束最小二乘法滤波的结果：
-![](https://github.com/zhuhu00/hw6/tree/master/pic/p3_y_l.jpg)   
+故实现该滤波器需要将图像进行傅里叶变换后并移至图像中心，之后将图像的傅里叶变换和模糊滤波器的傅里叶变换进行阵列相乘，将得到的结果经过傅里叶反变换返回到空间域即可实现滤波器。  
+2. 模糊lena图像：45度方向，T=1；   
+3. 在模糊后的图像中加入高斯噪声（均值为0；方差为0.01)   
+![2](https://github.com/zhuhu00/hw6/tree/master/pic/p31.jpg)   
+4. 分别利用方程 Eq. (5.8-6)和(5.9-4)，恢复图像。  
+维纳滤波结果：    
+![2](https://github.com/zhuhu00/hw6/tree/master/pic/p3_mh_w.jpg)  
+约束最小二乘法滤波的结果：  
+![2](https://github.com/zhuhu00/hw6/tree/master/pic/p3_y_l.jpg)   
 
 - **结果分析和总结**
 通过自己编写的模糊函数对图像进行处理，结合MATLAB中的`imfilter()`和`fspecial()`函数，对图像进行了模糊滤波，模糊的效果基本是一致的。之后调用`imnoise()`进行添加了高斯噪声，得到模糊并加上高斯噪声的结果。  
