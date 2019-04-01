@@ -1,0 +1,228 @@
+%% 添加高斯噪声
+clear all;
+clc;
+img = imread('lena.bmp');
+%% 
+g_img1 = gaosi(img,0,0.1);
+g_img2 = gaosi(img,0,0.5);
+g_img3 = gaosi(img,0,1);
+j_img1 = jiaoyan(img,0.1,0.1);
+figure;
+subplot(221);imshow(img);title('源图像')
+subplot(222);imshow(g_img1);title('添加高斯噪声后的图像,均值=0；方差为0.1');
+subplot(223);imshow(g_img2);title('添加高斯噪声后的图像，均值=0；方差为0.5');
+subplot(224);imshow(g_img3);title('添加高斯噪声后的图像，均值=0；方差为1');
+figure;
+imshow(j_img1);title('椒盐图像')
+%% 添加高斯滤波并复原图像
+% g_img = gaosi(img,0,0.03);%添加高斯噪声,可指定方差和均值
+g_img = imnoise(img,'gaussian',0.03);
+% 使用自适应滤波
+[img11,noise] = wiener2(g_img,[5,5]);
+figure;
+subplot(131);imshow(img);  title('原图像');
+subplot(132);imshow(g_img);title('加入高斯噪声的图像');
+subplot(133);imshow(img11);title('自适应滤波后的图像');
+%% 使用平滑滤波
+img12 = filter2(fspecial('average',3),g_img)/255;
+figure;
+subplot(131);imshow(img);title('源图像')
+subplot(132);imshow(g_img);title('添加高斯噪声后的图像')
+subplot(133);imshow(img12);title('平滑滤波后的图像')
+%% 算术和几何滤波
+img = im2double(img);
+g_img = imnoise(img,'gaussian',0.03);
+PSF = fspecial('average',3);
+img13 = imfilter(g_img,PSF);
+img14 = exp(imfilter(log(g_img),PSF));
+figure;
+subplot(221);imshow(img);title('源图像')
+subplot(222);imshow(g_img);title('添加高斯噪声后的图像');
+subplot(223);imshow(img13);title('算术平滑滤波后的图像');
+subplot(224);imshow(img14);title('几何平滑滤波后的图像');
+
+%% 中值滤波
+img15 = medfilt2(g_img,[5,5]);
+figure;
+subplot(131);imshow(img);title('源图像')
+subplot(132);imshow(g_img);title('添加高斯噪声后的图像')
+subplot(133);imshow(img15);title('平滑滤波后的图像')
+%% 添加椒盐噪声，可指定胡椒和白盐的密度,并复原图象
+j_img = jiaoyan(img,0.03,0.03);
+% 使用平滑滤波
+img21 = filter2(fspecial('average',3),j_img)/255;
+figure;
+subplot(131);imshow(img);title('源图像')
+subplot(132);imshow(j_img);title('添加椒盐噪声后的图像')
+subplot(133);imshow(img21);title('平滑滤波后的图像')
+%% 自适应滤波
+[img22,noise] = wiener2(j_img,[5,5]);
+figure;
+subplot(131);imshow(img);  title('原图像');
+subplot(132);imshow(j_img);title('加入椒盐噪声的图像');
+subplot(133);imshow(img22);title('自适应滤波后的图像');
+
+%% 几何和算术滤波
+img = im2double(img);
+% g_img = imnoise(img,'gaussian',0.03);
+PSF = fspecial('average',3);
+j_img = im2double(j_img);
+img23 = imfilter(j_img,PSF);
+img24 = exp(imfilter(log(j_img),PSF));
+figure;
+subplot(221);imshow(img);title('源图像')
+subplot(222);imshow(j_img);title('添加椒盐噪声后的图像');
+subplot(223);imshow(img23);title('算术平滑滤波后的图像');
+subplot(224);imshow(img24);title('几何平滑滤波后的图像');
+%% %% 中值滤波
+img25 = medfilt2(j_img,[5,5]);
+figure;
+subplot(131);imshow(img);title('源图像')
+subplot(132);imshow(j_img);title('添加高斯噪声后的图像')
+subplot(133);imshow(img25);title('平滑滤波后的图像')
+
+%% ---------------Denoise(salt and pepper noise)----------
+close all;
+clear all;
+clc;
+
+f = imread('lena.bmp');
+f = mat2gray(f,[0 255]);
+[M,N] = size(f);
+%% ---------------Salt & pepper-------------------
+b = 0;  %salt
+a = 0.1;    %pepper
+x = rand(M,N);
+
+g_sp = zeros(M,N);
+g_sp = f;
+
+g_sp(find(x<=a)) = 0;
+g_sp(find(x > a & x<(a+b))) = 1;
+
+figure();
+subplot(1,2,1);
+imshow(g_sp);
+xlabel('a).Image corrupted by pepper noise');
+
+%% ---------------Denoise(Salt & pepper)-------------------
+g_Ex = zeros(M+2,N+2);
+for x = 1:M
+    g_Ex(x+1,:) = [g_sp(x,1) g_sp(x,:) g_sp(x,N)];
+end
+g_Ex(1,:) = g_Ex(2,:);
+g_Ex(M+2,:) = g_Ex(M+1,:);
+
+% Contraharmonic mean filter
+Q1 = 1.5;
+Q2 = -1.5;
+g_cmf1 = zeros(M,N);
+g_cmf2 = zeros(M,N);
+for x = 2:M+1
+    for y = 2:N+1
+        g_cmf_M = (g_Ex(x  ,y))^(1+Q1);
+        g_cmf_M = g_cmf_M +  (g_Ex(x-1,y))^(1+Q1);
+        g_cmf_M = g_cmf_M +  (g_Ex(x  ,y-1))^(1+Q1);
+        g_cmf_M = g_cmf_M +  (g_Ex(x+1,y))^(1+Q1);
+        g_cmf_M = g_cmf_M +  (g_Ex(  x,y+1))^(1+Q1);
+        g_cmf_M = g_cmf_M +  (g_Ex(x-1,y+1))^(1+Q1);
+        g_cmf_M = g_cmf_M +  (g_Ex(x+1,y-1))^(1+Q1);
+        g_cmf_M = g_cmf_M +  (g_Ex(x+1,y+1))^(1+Q1);
+        g_cmf_M = g_cmf_M +  (g_Ex(x-1,y-1))^(1+Q1);
+        
+        g_cmf_D = (g_Ex(x  ,y))^(Q1);
+        g_cmf_D = g_cmf_D +  (g_Ex(x-1,y))^(Q1);
+        g_cmf_D = g_cmf_D +  (g_Ex(x  ,y-1))^(Q1);
+        g_cmf_D = g_cmf_D +  (g_Ex(x+1,y))^(Q1);
+        g_cmf_D = g_cmf_D +  (g_Ex(  x,y+1))^(Q1);
+        g_cmf_D = g_cmf_D +  (g_Ex(x-1,y+1))^(Q1);
+        g_cmf_D = g_cmf_D +  (g_Ex(x+1,y-1))^(Q1);
+        g_cmf_D = g_cmf_D +  (g_Ex(x+1,y+1))^(Q1);
+        g_cmf_D = g_cmf_D +  (g_Ex(x-1,y-1))^(Q1);
+        
+        g_cmf1(x-1,y-1) = g_cmf_M/g_cmf_D;
+    end
+end
+for x = 2:M+1
+    for y = 2:N+1
+        g_cmf_M = (g_Ex(x  ,y))^(1+Q2);
+        g_cmf_M = g_cmf_M +  (g_Ex(x-1,y))^(1+Q2);
+        g_cmf_M = g_cmf_M +  (g_Ex(x  ,y-1))^(1+Q2);
+        g_cmf_M = g_cmf_M +  (g_Ex(x+1,y))^(1+Q2);
+        g_cmf_M = g_cmf_M +  (g_Ex(  x,y+1))^(1+Q2);
+        g_cmf_M = g_cmf_M +  (g_Ex(x-1,y+1))^(1+Q2);
+        g_cmf_M = g_cmf_M +  (g_Ex(x+1,y-1))^(1+Q2);
+        g_cmf_M = g_cmf_M +  (g_Ex(x+1,y+1))^(1+Q2);
+        g_cmf_M = g_cmf_M +  (g_Ex(x-1,y-1))^(1+Q2);
+        
+        g_cmf_D = (g_Ex(x  ,y))^(Q1);
+        g_cmf_D = g_cmf_D +  (g_Ex(x-1,y))^(Q2);
+        g_cmf_D = g_cmf_D +  (g_Ex(x  ,y-1))^(Q2);
+        g_cmf_D = g_cmf_D +  (g_Ex(x+1,y))^(Q2);
+        g_cmf_D = g_cmf_D +  (g_Ex(  x,y+1))^(Q2);
+        g_cmf_D = g_cmf_D +  (g_Ex(x-1,y+1))^(Q2);
+        g_cmf_D = g_cmf_D +  (g_Ex(x+1,y-1))^(Q2);
+        g_cmf_D = g_cmf_D +  (g_Ex(x+1,y+1))^(Q2);
+        g_cmf_D = g_cmf_D +  (g_Ex(x-1,y-1))^(Q2);
+        
+        g_cmf2(x-1,y-1) = g_cmf_M/g_cmf_D;
+    end
+end
+figure();
+subplot(121);imshow(g_cmf1,[0 1]);xlabel('b).Ruselt of Denoise by Cmf(Q=1.5)');
+subplot(122);imshow(g_cmf2,[0 1]);xlabel('c).Ruselt of Denoise by Cmf(Q=-1.5)');
+
+
+%% 第三题
+% 运动模糊
+clear all;
+clc;
+img = imread('lena.bmp');
+img_r = img;
+img = double(img_r);
+F = fft2(img);
+F = fftshift(F);
+[M,N] = size(F);
+a = 0.1;b = 0.1;T = 1;
+for u=1:M
+    for v = 1:N
+        H(u,v) = (T/(pi*(u*a+v*b)))*sin(pi*(u*a+v*b))*exp(-sqrt(-1)*pi*(u*a+v*b));
+        G(u,v) = H(u,v)*F(u,v);
+    end
+end
+G = ifftshift(G);
+g = ifft2(G);
+g = 256.*g./max(max(g));
+g = uint8(real(g));
+img_g = imnoise(img_r,'gaussian',0,0.01);
+figure;
+subplot(221);imshow(img_r);title('源图像')
+subplot(222);imshow(g);title('运动模糊后的图像')
+subplot(223);imshow(img_g);title('加高斯噪声，运动模糊后的图像');
+%%
+I=imread('lena.bmp');
+H=fspecial('motion',50,45);
+I1=imfilter(I,H,'circular','conv');
+figure(1);
+subplot(131);imshow(I1);title('运动模糊后的lena.bmp(角度为45度)');
+I2=imnoise(I1,'gaussian',0,0.01);
+subplot(132);imshow(I2);title('加噪并模糊的lena.bmp');
+subplot(133);
+noise=imnoise(zeros(size(I)),'gaussian',0,0.01);
+NSR=sum(noise(:).^2)/sum(im2double(I(:)).^2);
+I3=deconvwnr(I2,H,NSR);
+imshow(I3);title('维纳滤波的结果');
+%% 
+I=imread('lena.bmp');
+h=fspecial('motion',50,45);
+I1=imfilter(I,h,'circular','conv');
+I2=imnoise(I1,'gaussian',0,0.01);
+figure(1);subplot(121);
+imshow(I2);
+title('lena运动模糊+高斯噪声');
+V=0.0001;
+NoisePower=V*prod(size(I));
+[g,LAGRA]=deconvreg(I1,h,NoisePower);
+subplot(122)
+imshow(g);
+title('约束最小二乘滤波的结果');
