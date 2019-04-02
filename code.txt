@@ -226,3 +226,22 @@ NoisePower=V*prod(size(I));
 subplot(122)
 imshow(g);
 title('约束最小二乘滤波的结果');
+
+function j_img = jiaoyan(img,jd,yd)
+% img为输入图像
+% jd为胡椒的密度
+% yd为白盐密度
+% jd = 0.1;yd = 0.1;
+n = size(img);
+% img = im2double(img);
+a1 = rand(n)<jd;
+a2 = rand(n)<yd;
+j_img = img;
+j_img(a1&a2) = 0;
+j_img(a1&~a2) = 255;
+% imshow(j_img);
+function n_img = gaosi(img,mean,c)
+n =size(img);
+noise1 = mean+sqrt(c)*randn(n);
+img = im2double(img);
+n_img = img+noise1;
